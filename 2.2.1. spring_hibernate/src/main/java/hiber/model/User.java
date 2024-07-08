@@ -1,6 +1,7 @@
 package hiber.model;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
@@ -10,14 +11,18 @@ public class User {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-   @Column(name = "name")
+   @Column(name = "name", nullable = false)
    private String firstName;
 
-   @Column(name = "last_name")
+   @Column(name = "last_name", nullable = false)
    private String lastName;
 
-   @Column(name = "email")
+   @Column(name = "email", nullable = false)
    private String email;
+
+   @OneToOne(cascade = CascadeType.ALL)
+   @JoinColumn(name = "car_id", referencedColumnName = "id")
+   private Car car;
 
    public User() {}
    
@@ -27,6 +32,7 @@ public class User {
       this.email = email;
    }
 
+   // Геттеры и сеттеры
    public Long getId() {
       return id;
    }
@@ -57,5 +63,39 @@ public class User {
 
    public void setEmail(String email) {
       this.email = email;
+   }
+
+   public Car getCar() {return car; }
+
+   public void setCar(Car car) {this.car = car; }
+
+   //Переопределение методов equals и hashCode
+   @Override
+   public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      User user = (User) o;
+      if (!Objects.equals(id, user.id)) return false;
+      if (!Objects.equals(firstName, user.firstName)) return false;
+      if (!Objects.equals(lastName, user.lastName)) return false;
+      if (!Objects.equals(email, user.email)) return false;
+      return Objects.equals(car, user.car);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(id, firstName, lastName, email, car);
+   }
+
+   //Переопределение метода toString
+   @Override
+   public String toString() {
+      return "User{" +
+              "id=" + id +
+              ", firstName='" + firstName + '\'' +
+              ", lastName='" + lastName + '\'' +
+              ", email='" + email + '\'' +
+              ", car=" + (car != null ? car.getId() : "null") +
+              '}';
    }
 }
